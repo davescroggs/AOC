@@ -4,4 +4,4 @@ This repo is to record attempts at the Advent of Code, starting with the 2022 ye
 
 # Results
 
--   [Day 1]("markdowns/aoc_day1.md")
+-   [Day 1](markdowns/aoc_day1.md)

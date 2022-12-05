@@ -1,0 +1,48 @@
+---
+title: "AOC 2022 - Day 3"
+output: github_document
+
+knit: (function(inputFile, encoding) {
+      out_dir <- "../markdowns";
+      rmarkdown::render(inputFile,
+                        encoding=encoding,
+                        output_dir=file.path(dirname(inputFile), out_dir))})
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(here)
+
+## Read in full data
+test <- tibble(packs = read_lines("../data/aoc_day4_test.txt"))
+
+assignments <- tibble(packs = read_lines("../data/aoc_day4.txt"))
+```
+
+## Part 1
+
+```{r}
+assignments %>% 
+ extract(packs, c("Elf1_start", "Elf1_end", "Elf2_start", "Elf2_end"), regex = "(\\d+)\\-(\\d+)\\,(\\d+)\\-(\\d+)") %>% 
+ mutate(grp = 1:n(),
+        Elf1_span = map2(Elf1_start,Elf1_end, ~.x:.y),
+        Elf2_span = map2(Elf2_start,Elf2_end, ~.x:.y),
+        overlap1 = map2_int(Elf1_span, Elf2_span, ~length(setdiff(.x,.y))),
+        overlap2 = map2_int(Elf2_span, Elf1_span, ~length(setdiff(.x,.y)))) %>% 
+ summarise(overlaps = sum(overlap1 == 0L | overlap2 == 0L))
+
+```
+
+## Part 2
+
+```{r}
+assignments %>% 
+  extract(packs, c("Elf1_start", "Elf1_end", "Elf2_start", "Elf2_end"), regex = "(\\d+)\\-(\\d+)\\,(\\d+)\\-(\\d+)") %>% 
+  mutate(grp = 1:n(),
+         Elf1_span = map2(Elf1_start,Elf1_end, ~.x:.y),
+         Elf2_span = map2(Elf2_start,Elf2_end, ~.x:.y),
+         overlap1 = map2_int(Elf1_span, Elf2_span, ~length(intersect(.x,.y))),
+         overlap2 = map2_int(Elf2_span, Elf1_span, ~length(intersect(.x,.y)))) %>% 
+  summarise(overlaps = sum(overlap1 > 0L | overlap2 > 0L))
+```
+
